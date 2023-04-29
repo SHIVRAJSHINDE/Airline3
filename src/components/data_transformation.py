@@ -28,8 +28,7 @@ class DataTransformation:
         try:
             numPipelineColumns = ['JourneyDay','JourneyMonth','JourneyYear','Dep_Time_Hr','Dep_Time_Min','Arr_Time_Hr','Arr_Time_Min','DurationOnlyInMinutes']
 
-            catOne = ['Airline','Source','Destination']
-            catTwo = ['Total_Stops']
+            catVal = ['Airline','Source','Destination','Total_Stops']
 
             numPipeline = Pipeline(
                     steps=[
@@ -38,26 +37,18 @@ class DataTransformation:
                     ])
 
 
-            catOnePipeline = Pipeline(steps=[
-                ("imputer",SimpleImputer(strategy="most_frequent")),
-                ("one_hot_encoder",OneHotEncoder()),
-                ("scaler",StandardScaler(with_mean=False))
-            ])
-
             catTwoPipeline = Pipeline(steps=[
                 ("imputer",SimpleImputer(strategy="most_frequent")),
-                ("label_encoder",LabelEncoder()),
+                ("one_hot_encoder", OneHotEncoder()),
                 ("scaler",StandardScaler(with_mean=False))
             ])
 
 
-            logging.info(f"Categorical columns: {catOnePipeline}")
-            logging.info(f"Categorical columns: {catTwoPipeline}")
-            logging.info(f"Numerical columns: {numPipeline}")
+            logging.info(f"Categorical columns: {catVal}")
+            logging.info(f"Numerical columns: {numPipelineColumns}")
 
             preprocessor = ColumnTransformer([
-                ("catOnePipeline", catOnePipeline, catOne),
-                ("catTwoPipeline", catTwoPipeline, catTwo),
+                ("catTwoPipeline", catTwoPipeline, catVal),
                 ("numPipeline", numPipeline, numPipelineColumns),
 
             ])
@@ -92,8 +83,10 @@ class DataTransformation:
             print("input_feature_train_df")
             print(input_feature_train_df)
             print("input_feature_train_df")
-
-            input_feature_train_arr=preprocessing_obj.fit_transform(input_feature_train_df)
+            #scaler = StandardScaler()
+            #X_feat = input_feature_train_df[['Airline','Source','Destination','Total_Stops','JourneyDay','JourneyMonth','JourneyYear','Dep_Time_Hr','Dep_Time_Min','Arr_Time_Hr','Arr_Time_Min','DurationOnlyInMinutes']]
+            #input_feature_train_arr1 =preprocessing_obj(X_feat)
+            input_feature_train_arr = preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr=preprocessing_obj.transform(input_feature_test_df)
 
             train_arr = np.c_[
